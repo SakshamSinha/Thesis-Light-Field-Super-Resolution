@@ -6,11 +6,13 @@ class Generator(nn.Module):
         super(Generator, self).__init__()
 
         self.conv1 = nn.Conv2d(3, 64, 9, stride=1, padding=4)
-        self.relu= nn.ReLU(True)
+        self.relu1= nn.ReLU(True)
         self.conv2 = nn.Conv2d(64, 3, 9, stride=1, padding=1)
+        self.relu2 = nn.ReLU(True)
 
     def forward(self, x):
         y = self.conv1(x)
         y = self.relu(y)
         y = self.conv2(y)
         y = self.relu(y)
+        return (y)
