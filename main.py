@@ -1,6 +1,7 @@
 import argparse
 import os
 import torch
+import numpy as np
 from torch.autograd import Variable
 from torchvision import datasets
 from torchvision.transforms import transforms
@@ -76,6 +77,7 @@ for batch_no, data in enumerate(dataloader):
         high_img[j] = normalize(high_img[j])
 
     input_comb = torch.cat([scale(input1), scale(input2), scale(input3), scale(input4)],0)
+    input_comb = input_comb[np.newaxis, :]
     if opt.cuda:
         optimizer.zero_grad()
         high_res_real = Variable(high_img.cuda())
