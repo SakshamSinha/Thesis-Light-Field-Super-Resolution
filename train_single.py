@@ -7,7 +7,7 @@ from torchvision import datasets
 from torchvision.transforms import transforms
 from torchvision.utils import save_image
 import time
-from utils import normalize, imshow
+from utils import normalize, imsave
 from Model import SingleGenerator, SingleDiscriminator
 import torch.optim as optim
 import torch.nn as nn
@@ -89,7 +89,7 @@ def train_single(generator, discriminator, opt, dataloader, writer, scale):
                 discriminator_loss.backward()
                 optim_discriminator.step()
 
-        imshow(high_res_fake.cpu().data)
+        # imshow(high_res_fake.cpu().data)
         scheduler_gen.step(mean_generator_total_loss)
         scheduler_dis.step(mean_discriminator_loss)
         # import ipdb;

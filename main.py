@@ -67,12 +67,14 @@ scale = transforms.Compose([transforms.ToPILImage(),
                                                 std = [0.229, 0.224, 0.225])
                             ])
 
-dataset = datasets.ImageFolder(root=opt.dataroot, transform=transform)
+# dataset = datasets.ImageFolder(root=opt.dataroot, transform=transform)
+#
+# dataloader = torch.utils.data.DataLoader(dataset, batch_size=opt.batchSize,
+#                                          shuffle=True, num_workers=int(opt.workers))
+dataset = {x: datasets.ImageFolder(os.path.join(opt.dataroot, x), transform=transform) for x in ['train','test']}
 
-dataloader = torch.utils.data.DataLoader(dataset, batch_size=opt.batchSize,
-                                         shuffle=True, num_workers=int(opt.workers))
-
-
+dataloader = {x: torch.utils.data.DataLoader(dataset[x], batch_size=opt.batchSize,drop_last=True,
+                                         shuffle=True, num_workers=int(opt.workers)) for x in ['train','test']}
 
 # # print(len(dataset))
 # generator = SingleGenerator(5,opt.upSampling)
