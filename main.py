@@ -23,7 +23,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataroot', type=str, default='data', help='path to dataset')
 parser.add_argument('--workers', type=int, default=4, help='number of data loading workers')
 parser.add_argument('--batchSize', type=int, default=4, help='input batch size')
-parser.add_argument('--imageSize', type=int, default=32, help='the low resolution image size')
+parser.add_argument('--imageSize', type=int, default=64, help='the low resolution image size')
 parser.add_argument('--upSampling', type=int, default=4, help='low to high resolution scaling factor')
 parser.add_argument('--nEpochs', type=int, default=100, help='number of epochs to train for')
 parser.add_argument('--generatorLR', type=float, default=0.0001, help='learning rate for generator')
@@ -40,9 +40,12 @@ print(opt)
 writer = SummaryWriter()
 
 try:
-    os.makedirs('output/high_res_fake')
-    os.makedirs('output/high_res_real')
-    os.makedirs('output/low_res')
+    os.makedirs('output/test/high_res_fake')
+    os.makedirs('output/test/high_res_real')
+    os.makedirs('output/test/low_res')
+    os.makedirs('output/train/high_res_fake')
+    os.makedirs('output/train/high_res_real')
+    os.makedirs('output/train/low_res')
 except OSError:
     pass
 
@@ -56,8 +59,8 @@ if torch.cuda.is_available() and not opt.cuda:
     print("WARNING: You have a CUDA device, so you should probably run with --cuda")
 
 
-transform = transforms.Compose([transforms.RandomCrop((opt.imageSize*opt.upSampling,opt.imageSize*opt.upSampling)),
-                                # transforms.Resize((opt.imageSize*opt.upSampling,opt.imageSize*opt.upSampling)),
+transform = transforms.Compose([#transforms.RandomCrop((opt.imageSize*opt.upSampling,opt.imageSize*opt.upSampling)),
+                                 transforms.Resize((opt.imageSize*opt.upSampling,opt.imageSize*opt.upSampling)),
                                 transforms.ToTensor()])
 
 scale = transforms.Compose([transforms.ToPILImage(),
@@ -85,7 +88,7 @@ dataloader = {x: torch.utils.data.DataLoader(dataset[x], batch_size=opt.batchSiz
 #
 # train_single(generator, discriminator, opt, dataloader, writer, scale)
 
-generator = MultipleGenerator(5,opt.upSampling)
+generator = MultipleGenerator(16,opt.upSampling)
 print(generator)
 discriminator = MultipleDiscriminator()
 print(discriminator)

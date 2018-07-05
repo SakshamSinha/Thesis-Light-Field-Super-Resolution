@@ -11,7 +11,7 @@ normalize = transforms.Normalize(mean = [0.485, 0.456, 0.406],
 
 def imsave(img_tensor, train, epoch, image_type, title=None):
     """Imshow for Tensor."""
-    for img in  img_tensor:
+    for i, img in  enumerate(img_tensor):
         transform = transforms.Compose([transforms.Normalize(mean = [-2.118, -2.036, -1.804], std = [4.367, 4.464, 4.444]),
                                         transforms.ToPILImage()])
         img = transform(img)
@@ -20,18 +20,18 @@ def imsave(img_tensor, train, epoch, image_type, title=None):
         # plt.imshow(inp)
         if train:
             if(image_type=='fake'):
-                img.save('output/train/high_res_fake/'+str(epoch)+'.png')
+                img.save('output/train/high_res_fake/'+str(epoch)+'_'+str(i)+'.png')
             elif(image_type=='low'):
-                img.save('output/train/low_res/'+str(epoch)+'.png')
+                img.save('output/train/low_res/'+str(epoch)+'_'+str(i)+'.png')
             elif(image_type == 'real'):
-                img.save('output/train/high_res_real/'+str(epoch)+'.png')
+                img.save('output/train/high_res_real/'+str(epoch)+'_'+str(i)+'.png')
         else:
             if(image_type=='fake'):
-                img.save('output/test/high_res_fake/'+str(epoch)+'.png')
+                img.save('output/test/high_res_fake/'+str(epoch)+'_'+str(i)+'.png')
             elif(image_type=='low'):
-                img.save('output/test/low_res/'+str(epoch)+'.png')
+                img.save('output/test/low_res/'+str(epoch)+'_'+str(i)+'.png')
             elif(image_type == 'real'):
-                img.save('output/test/high_res_real/'+str(epoch)+'.png')
+                img.save('output/test/high_res_real/'+str(epoch)+'_'+str(i)+'.png')
         # plt.pause(1)
 
 def avg_msssim(real_images, fake_images):

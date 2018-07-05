@@ -137,6 +137,14 @@ class SingleDiscriminator(nn.Module):
         x = self.conv9(x)
         return F.sigmoid(F.avg_pool2d(x, x.size()[2:])).view(x.size()[0], -1)
 
+class FeatureExtractor(nn.Module):
+    def __init__(self, cnn, feature_layer=11):
+        super(FeatureExtractor, self).__init__()
+        self.features = nn.Sequential(*list(cnn.features.children())[:(feature_layer+1)])
+
+    def forward(self, x):
+        return self.features(x)
+
 class MultipleGenerator(nn.Module):
     def __init__(self, n_residual_blocks, upsample_factor):
         super(MultipleGenerator, self).__init__()
@@ -152,7 +160,7 @@ class MultipleGenerator(nn.Module):
             self.add_module('residual_block' + str(i+1), residualBlock())
 
         self.conv2 = nn.Conv2d(64, 64, 3, stride=1, padding=1)
-        # self.bn2 = nn.BatchNorm2d(64)
+        self.bn2 = nn.BatchNorm2d(64)
 
         for i in range(self.upsample_factor//2):
             self.add_module('upsample' + str(i+1), upsampleBlock(64, 256))
