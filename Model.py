@@ -159,16 +159,22 @@ class MultipleGenerator(nn.Module):
         for i in range(self.n_residual_blocks):
             self.add_module('residual_block' + str(i+1), residualBlock())
 
-        self.conv2 = nn.Conv2d(64, 64, 3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(64, 128, 3, stride=1, padding=1)
         self.bn2 = nn.BatchNorm2d(64)
+
+        self.conv3 = nn.Conv2d(128, 128, 3, stride=1, padding=1)
+        self.bn3 = nn.BatchNorm2d(64)
+
+        self.conv4 = nn.Conv2d(128, 64, 3, stride=1, padding=1)
+        self.bn4 = nn.BatchNorm2d(64)
 
         for i in range(self.upsample_factor//2):
             self.add_module('upsample' + str(i+1), upsampleBlock(64, 256))
 
-        self.conv3_out1 = nn.Conv2d(64, 3, 9, stride=1, padding=4)
-        self.conv3_out2 = nn.Conv2d(64, 3, 9, stride=1, padding=4)
-        self.conv3_out3 = nn.Conv2d(64, 3, 9, stride=1, padding=4)
-        self.conv3_out4 = nn.Conv2d(64, 3, 9, stride=1, padding=4)
+        self.conv5_out1 = nn.Conv2d(64, 3, 9, stride=1, padding=4)
+        self.conv5_out2 = nn.Conv2d(64, 3, 9, stride=1, padding=4)
+        self.conv5_out3 = nn.Conv2d(64, 3, 9, stride=1, padding=4)
+        self.conv5_out4 = nn.Conv2d(64, 3, 9, stride=1, padding=4)
 
     def forward(self, x1, x2, x3, x4):
         x1 = swish(self.conv1_in1(x1))
@@ -182,6 +188,8 @@ class MultipleGenerator(nn.Module):
             y = self.__getattr__('residual_block' + str(i+1))(y)
 
         x = self.conv2(y)
+        x = self.conv3(x)
+        x = self.conv4(x)
 
         for i in range(self.upsample_factor//2):
             x = self.__getattr__('upsample' + str(i+1))(x)
@@ -189,7 +197,7 @@ class MultipleGenerator(nn.Module):
         x = torch.chunk(x,4,0)
         # import ipdb
         # ipdb.set_trace()
-        return [self.conv3_out1(x[0]),self.conv3_out2(x[1]),self.conv3_out3(x[2]),self.conv3_out3(x[3])]
+        return torch.cat([self.conv5_out1(x[0]),self.conv5_out2(x[1]),self.conv5_out3(x[2]),self.conv5_out3(x[3])],0)
 
 class MultipleDiscriminator(nn.Module):
     def __init__(self):
@@ -240,3 +248,35 @@ class MultipleDiscriminator(nn.Module):
         # x = self.conv9(x3)
         # x = self.conv9(x4)
         return F.sigmoid(F.avg_pool2d(x, x.size()[2:])).view(x.size()[0], -1)
+
+class AngRes(nn.Module):
+    def __init__(self):
+        super(AngRes, self).__init__()
+        self.conv_in1 = nn.Conv2d(3, 32, 3, stride=1, padding=1)
+        self.conv_in2 = nn.Conv2d(3, 32, 3, stride=1, padding=1)
+        self.conv_in3 = nn.Conv2d(3, 32, 3, stride=1, padding=1)
+        self.conv_in4 = nn.Conv2d(3, 32, 3, stride=1, padding=1)
+        self.conv_l1 = nn.Conv2d(128, 256, 5, stride=1, padding=2)
+
+        self.conv_l2 = nn.Conv2d(256, 256, 5, stride=1, padding=2)
+        self.conv_l3 = nn.Conv2d(256, 128, 3, stride=1, padding=1)
+        self.conv_l4 = nn.Conv2d(128, 64, 3, stride=1, padding=1)
+        # for i in range(10):
+        #     self.add_module('residual_block' + str(i+1), residualBlock())
+        self.conv_l5 = nn.Conv2d(64, 32, 3, stride=1, padding=1)
+        self.conv_out = nn.Conv2d(32, 3, 3, stride=1, padding=1)
+    def forward(self, x1, x2, x3, x4):
+        x1 = swish(self.conv_in1(x1))
+        x2 = swish(self.conv_in2(x2))
+        x3 = swish(self.conv_in2(x3))
+        x4 = swish(self.conv_in2(x4))
+        y = torch.cat([x1.clone(), x2.clone(), x3.clone(), x4.clone()], 1)
+        y = swish(self.conv_l1(y))
+        # for i in range(10):
+        #     y = self.__getattr__('residual_block' + str(i+1))(y)
+        y = nn.ReLU()(self.conv_l2(y))
+        y = nn.ReLU()(self.conv_l3(y))
+        y = nn.ReLU()(self.conv_l4(y))
+        y = swish(self.conv_l5(y))
+        y = swish(self.conv_out(y))
+        return y
