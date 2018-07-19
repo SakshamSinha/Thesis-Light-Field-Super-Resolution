@@ -146,9 +146,9 @@ def save_matlab_files(epoch):
 def get_matlab_lf(phase = 'train'):
     lfimages=[]
     if phase=='train':
-        for filename in os.listdir('matlab scripts/lfimages_train'):
+        for filename in os.listdir('data/lfimages_train'):
             print(filename)
-            traindata = sio.loadmat('matlab scripts/lfimages_train/'+filename)
+            traindata = sio.loadmat('data/lfimages_train/'+filename)
             lfimages.append(traindata['LF_lfname'])
             # img = torch.tensor(traindata['LF_lfname'][1][1])
             # img = torch.transpose(img, 0, 2)
@@ -160,9 +160,9 @@ def get_matlab_lf(phase = 'train'):
             #sio.savemat('output/test.png', {'Predict': img})
         return lfimages
     else:
-        for filename in os.listdir('matlab scripts/lfimages_test'):
+        for filename in os.listdir('data/lfimages_test'):
             print(filename)
-            traindata = sio.loadmat('matlab scripts/lfimages_test/'+filename)
+            traindata = sio.loadmat('data/lfimages_test/'+filename)
             lfimages.append(traindata['LF_lfname'])
             # img = torch.tensor(traindata['LF_lfname'][1][1])
             # img = torch.transpose(img, 0, 2)
