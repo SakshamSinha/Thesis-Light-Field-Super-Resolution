@@ -23,7 +23,7 @@ def un_normalize(img_tensor):
         img_tensor[i] = transform(img_tensor[i])
     return img_tensor
 
-def imsave(img_tensor, train, epoch, image_type, ang_res=False, title=None):
+def imsave(img_tensor, train, epoch, image_type, ang_res=False, title=None, row_ind=0, column_ind=0):
     """Imshow for Tensor."""
     for i, img in  enumerate(img_tensor):
         if(ang_res==False):
@@ -36,12 +36,13 @@ def imsave(img_tensor, train, epoch, image_type, ang_res=False, title=None):
         img = transform(img)
 
         # save_image(inp, 'output/high_res_real/try.png')
-        # plt.imshow(inp)
+        # plt.imshow(img)
         if not ang_res:
             if train:
                 if(image_type=='fake'):
                     img.save('output/train/high_res_fake/'+str(epoch)+'_'+str(i)+'.png')
                 elif(image_type=='low'):
+                    # plt.imshow(img)
                     img.save('output/train/low_res/'+str(epoch)+'_'+str(i)+'.png')
                 elif(image_type == 'real'):
                     img.save('output/train/high_res_real/'+str(epoch)+'_'+str(i)+'.png')
@@ -54,15 +55,60 @@ def imsave(img_tensor, train, epoch, image_type, ang_res=False, title=None):
                     img.save('output/test/high_res_real/'+str(epoch)+'_'+str(i)+'.png')
         else:
             if train:
-                if(image_type=='new'):
-                    img.save('output/train/ang_res_fake/'+str(epoch)+'_'+str(i)+'.png')
-                elif (image_type == 'real'):
-                    img.save('output/train/reals/' + str(epoch) + '_' + str(i) + '.png')
+                if(image_type=='new' and i==0):
+                    img.save('output/train/ang_res_fake_center/'+str(epoch)+'_'+str(i)+'.png')
+                elif (image_type == 'new' and i == 1):
+                    img.save('output/train/ang_res_fake_horizontaltop/' + str(epoch) + '_' + str(i) + '.png')
+                elif (image_type == 'new' and i == 2):
+                    img.save('output/train/ang_res_fake_horizontalbottom/' + str(epoch) + '_' + str(i) + '.png')
+                elif (image_type == 'new' and i == 3):
+                    img.save('output/train/ang_res_fake_verticalleft/' + str(epoch) + '_' + str(i) + '.png')
+                elif (image_type == 'new' and i == 4):
+                    img.save('output/train/ang_res_fake_verticalright/' + str(epoch) + '_' + str(i) + '.png')
+
+                elif (image_type == 'real_center'):
+                    img.save('output/train/reals_center/' + str(epoch) + '_' + str(i) + '.png')
+                elif (image_type == 'real_horizontaltop'):
+                    img.save('output/train/reals_horizontaltop/' + str(epoch) + '_' + str(i) + '.png')
+                elif (image_type == 'real_horizontalbottom'):
+                    img.save('output/train/reals_horizontalbottom/' + str(epoch) + '_' + str(i) + '.png')
+                elif (image_type == 'real_verticalleft'):
+                    img.save('output/train/reals_verticalleft/' + str(epoch) + '_' + str(i) + '.png')
+                elif (image_type == 'real_verticalright'):
+                    img.save('output/train/reals_verticalright/' + str(epoch) + '_' + str(i) + '.png')
             else:
-                if(image_type=='new'):
-                    img.save('output/test/ang_res_fake/'+str(epoch)+'_'+str(i)+'.png')
-                elif (image_type == 'real'):
-                    img.save('output/test/reals/' + str(epoch) + '_' + str(i) + '.png')
+                if (image_type == 'new' and i == 0):
+                    img.save('output/test/ang_res_fake_center/' + str(epoch) +'_'+ str(row_ind+1) + '_' + str(column_ind+1) + '.png')
+                elif (image_type == 'new' and i == 1):
+                    img.save('output/test/ang_res_fake_horizontaltop/' + str(epoch) +'_'+ str(row_ind) + '_' + str(column_ind+1) + '.png')
+                elif (image_type == 'new' and i == 2):
+                    img.save('output/test/ang_res_fake_horizontalbottom/' + str(epoch) +'_'+str(row_ind+2) + '_' + str(column_ind+1) + '.png')
+                elif (image_type == 'new' and i == 3):
+                    img.save('output/test/ang_res_fake_verticalleft/' + str(epoch) +'_'+str(row_ind+1) + '_' + str(column_ind) + '.png')
+                elif (image_type == 'new' and i == 4):
+                    img.save('output/test/ang_res_fake_verticalright/' + str(epoch) +'_'+str(row_ind+1) + '_' + str(column_ind+2) + '.png')
+
+                if (image_type == 'actual' and i == 0):
+                    img.save('output/test/corner1/' + str(epoch) +'_'+str(row_ind) + '_' + str(column_ind) + '.png')
+                elif (image_type == 'actual' and i == 1):
+                    img.save('output/test/corner2/' + str(epoch) +'_'+str(row_ind) + '_' + str(column_ind+1) + '.png')
+                elif (image_type == 'actual' and i == 2):
+                    img.save('output/test/corner3/' + str(epoch) +'_'+str(row_ind+1) + '_' + str(column_ind) + '.png')
+                elif (image_type == 'actual' and i == 3):
+                    img.save('output/test/corner4/' + str(epoch) +'_'+str(row_ind+1) + '_' + str(column_ind+1) + '.png')
+                # elif (image_type == 'new' and i == 4):
+                #     img.save('output/test/ang_res_fake_verticalright/' + str(row_ind) + '_' + str(column_ind) + '.png')
+
+                elif (image_type == 'real_center'):
+                    img.save('output/test/reals_center/' + str(epoch) + '_' + str(i) + '.png')
+                elif (image_type == 'real_horizontaltop'):
+                    img.save('output/test/reals_horizontaltop/' + str(epoch) + '_' + str(i) + '.png')
+                elif (image_type == 'real_horizontalbottom'):
+                    img.save('output/test/reals_horizontalbottom/' + str(epoch) + '_' + str(i) + '.png')
+                elif (image_type == 'real_verticalleft'):
+                    img.save('output/test/reals_verticalleft/' + str(epoch) + '_' + str(i) + '.png')
+                elif (image_type == 'real_verticalright'):
+                    img.save('output/test/reals_verticalright/' + str(epoch) + '_' + str(i) + '.png')
         # plt.pause(1)
 
 def avg_msssim(real_images, fake_images):
@@ -82,21 +128,20 @@ def mse(img1,img2):
     return mse_val
 
 def psnr(img1,img2):
-    # import ipdb
-    # ipdb.set_trace()
-    # img1 = img1.type(torch.FloatTensor)
-    # img2 = img2.type(torch.FloatTensor)
-    # transform = transforms.Compose(
-    #     [transforms.ToPILImage()])
-    # img1 = transform(img1)
-    # img2 = transform(img2)
+    mse = torch.mean((img1-img2) ** 2)
+    if mse == 0:
+        return 100
+    PIXEL_MAX = 255.0
+    return 20 * math.log10(1.0/math.sqrt(mse))
+    # return 10 * math.log10(1.0 / mse)
 
+def angres_psnr(img1,img2):
     mse = torch.mean((img1-img2) ** 2)
     if mse == 0:
         return 100
     PIXEL_MAX = 255.0
     # return 10 * math.log10(255.0/math.sqrt(mse))
-    return 10 * math.log10(1.0 / mse)
+    return 10 * math.log10(255 **2 / mse)
 
 def psnr_batch(ten1, ten2):
     avg_mse=0.0
@@ -150,26 +195,10 @@ def get_matlab_lf(phase = 'train'):
             print(filename)
             traindata = sio.loadmat('data/lfimages_train/'+filename)
             lfimages.append(traindata['LF_lfname'])
-            # img = torch.tensor(traindata['LF_lfname'][1][1])
-            # img = torch.transpose(img, 0, 2)
-            # img = torch.transpose(img, 1, 2)
-            # transform = transforms.Compose(
-            #     [transforms.ToPILImage()])
-            # img = transform(img)
-            # img.save('output/test.png')
-            #sio.savemat('output/test.png', {'Predict': img})
         return lfimages
     else:
         for filename in os.listdir('data/lfimages_test'):
             print(filename)
             traindata = sio.loadmat('data/lfimages_test/'+filename)
             lfimages.append(traindata['LF_lfname'])
-            # img = torch.tensor(traindata['LF_lfname'][1][1])
-            # img = torch.transpose(img, 0, 2)
-            # img = torch.transpose(img, 1, 2)
-            # transform = transforms.Compose(
-            #     [transforms.ToPILImage()])
-            # img = transform(img)
-            # img.save('output/test.png')
-            #sio.savemat('output/test.png', {'Predict': img})
         return lfimages

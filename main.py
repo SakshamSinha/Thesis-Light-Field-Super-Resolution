@@ -18,6 +18,7 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 
 from test_multiple import test_multiple, test_angres
+from test_single import test_single
 from train_multiple import train_multiple, train_angres, bilinear_upsampling
 from train_single import train_single
 from utils import get_matlab_lf
@@ -25,10 +26,10 @@ from utils import get_matlab_lf
 parser = argparse.ArgumentParser()
 # parser.add_argument('--dataset', type=str, default='cifar100', help='cifar10 | cifar100 | folder')
 parser.add_argument('--dataroot', type=str, default='data', help='path to dataset')
-parser.add_argument('--workers', type=int, default=4, help='number of data loading workers')
+parser.add_argument('--workers', type=int, default=8, help='number of data loading workers')
 parser.add_argument('--batchSize', type=int, default=4, help='input batch size')
 parser.add_argument('--imageSize', type=int, default=32, help='the low resolution image size')
-parser.add_argument('--upSampling', type=int, default=4, help='low to high resolution scaling factor')
+parser.add_argument('--upSampling', type=int, default=2, help='low to high resolution scaling factor')
 parser.add_argument('--nEpochs', type=int, default=100, help='number of epochs to train for')
 parser.add_argument('--generatorLR', type=float, default=0.0001, help='learning rate for generator')
 parser.add_argument('--discriminatorLR', type=float, default=0.0001, help='learning rate for discriminator')
@@ -36,7 +37,7 @@ parser.add_argument('--cuda', action='store_true', default='true', help='enables
 parser.add_argument('--nGPU', type=int, default=1, help='number of GPUs to use')
 parser.add_argument('--generatorWeights', type=str, default='checkpoints/generator_final.pth', help="path to generator weights ")
 parser.add_argument('--angresWeights', type=str, default='checkpoints/AngRes_final.pth', help="path to Angular resolution model weights ")
-parser.add_argument('--discriminatorWeights', type=str, default='', help="path to discriminator weights (to continue training)")
+parser.add_argument('--discriminatorWeights', type=str, default='checkpoints/discriminator_final.pth', help="path to discriminator weights (to continue training)")
 parser.add_argument('--out', type=str, default='checkpoints', help='folder to output model checkpoints')
 
 opt = parser.parse_args()
@@ -73,7 +74,7 @@ if torch.cuda.is_available() and not opt.cuda:
     print("WARNING: You have a CUDA device, so you should probably run with --cuda")
 
 
-transform = transforms.Compose([#transforms.RandomCrop((opt.imageSize*opt.upSampling,opt.imageSize*opt.upSampling)),
+transform = transforms.Compose([#transforms.CenterCrop((opt.imageSize*opt.upSampling,opt.imageSize*opt.upSampling)),
                                 transforms.Resize((opt.imageSize*opt.upSampling,opt.imageSize*opt.upSampling)),
                                 transforms.ToTensor()])
 
@@ -93,18 +94,20 @@ dataloader = {x: torch.utils.data.DataLoader(dataset[x], batch_size=opt.batchSiz
 # # print(len(dataset))
 # generator = SingleGenerator(5,opt.upSampling)
 # print(generator)
-# # print(len(dataset))
+# print(len(dataset))
 # discriminator = SingleDiscriminator()
 # print(discriminator)
 
 # train_single(generator, discriminator, opt, dataloader, writer, scale)
+
+# test_single(generator, discriminator, opt, dataloader,  scale)
 
 generator = MultipleGenerator(16,opt.upSampling)
 print(generator)
 discriminator = MultipleDiscriminator()
 print(discriminator)
 #bilinear_upsampling(opt, dataloader, scale)
-#train_multiple(generator, discriminator, opt, dataloader, writer, scale)
+# train_multiple(generator, discriminator, opt, dataloader, writer, scale)
 # #
 test_multiple(generator, discriminator, opt, dataloader, scale)
 

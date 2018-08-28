@@ -42,12 +42,40 @@ opt = parser.parse_args()
 print(opt)
 
 try:
+    os.makedirs('output/test/complete')
+    os.makedirs('output/train/reals_verticalright')
+    os.makedirs('output/test/reals_verticalright')
+
+    os.makedirs('output/test/ang_res_fake_horizontaltop')
+    os.makedirs('output/test/ang_res_fake_horizontalbottom')
+    os.makedirs('output/test/ang_res_fake_verticalleft')
+    os.makedirs('output/test/ang_res_fake_verticalright')
+
+    os.makedirs('output/train/ang_res_fake_horizontaltop')
+    os.makedirs('output/train/ang_res_fake_horizontalbottom')
+    os.makedirs('output/train/ang_res_fake_verticalleft')
+    os.makedirs('output/train/ang_res_fake_verticalright')
+
+    os.makedirs('output/train/reals_horizontaltop')
+    os.makedirs('output/train/reals_verticalleft')
+    os.makedirs('output/train/reals_horizontalbottom')
+
+
+    os.makedirs('output/test/reals_horizontaltop')
+    os.makedirs('output/test/reals_verticalleft')
+    os.makedirs('output/test/reals_horizontalbottom')
+
+
+    os.makedirs('output/train/reals_center')
+    os.makedirs('output/test/ang_res_fake_center')
+    os.makedirs('output/test/reals_center')
+    os.makedirs('output/train/ang_res_fake_center')
     os.makedirs('output/test/matlab')
 except OSError:
     pass
 
-transform = transforms.Compose([#transforms.RandomCrop((opt.imageSize*opt.upSampling,opt.imageSize*opt.upSampling)),
-                                transforms.Resize((opt.imageSize*opt.upSampling,opt.imageSize*opt.upSampling)),
+transform = transforms.Compose([transforms.RandomCrop((opt.imageSize*opt.upSampling,opt.imageSize*opt.upSampling)),
+                                #transforms.Resize((opt.imageSize*opt.upSampling,opt.imageSize*opt.upSampling)),
                                 transforms.ToTensor()])
 
 dataset = {x: datasets.ImageFolder(os.path.join(opt.dataroot, x), transform=transform) for x in ['train','test']}
@@ -60,12 +88,11 @@ print(ang_model)
 
 # Load training data
 print('Load training data \n')
-################## Vertical ###################
 
-#lfimages = get_matlab_lf()
+lfimages = get_matlab_lf('train')
+# #
+train_angres(ang_model, lfimages, opt, writer)
 
-#train_angres(ang_model, lfimages, opt, writer)
+# lfimages = get_matlab_lf('test')
 
-lfimages = get_matlab_lf('test')
-
-test_angres(ang_model, lfimages, opt)
+# test_angres(ang_model, lfimages, opt)
