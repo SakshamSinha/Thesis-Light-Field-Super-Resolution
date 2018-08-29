@@ -1,12 +1,10 @@
 import torch
 import torchvision
 from torch.autograd import Variable
-from torch.optim.lr_scheduler import ReduceLROnPlateau
 import time
 
 import pytorch_ssim
 from utils import normalize, imsave, avg_msssim, psnr, psnr_batch, un_normalize, angres_psnr
-import torch.optim as optim
 import torch.nn as nn
 import numpy as np
 from Model import FeatureExtractor

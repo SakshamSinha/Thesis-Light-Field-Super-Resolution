@@ -24,7 +24,6 @@ from train_single import train_single
 from utils import get_matlab_lf
 
 parser = argparse.ArgumentParser()
-# parser.add_argument('--dataset', type=str, default='cifar100', help='cifar10 | cifar100 | folder')
 parser.add_argument('--dataroot', type=str, default='data', help='path to dataset')
 parser.add_argument('--workers', type=int, default=8, help='number of data loading workers')
 parser.add_argument('--batchSize', type=int, default=4, help='input batch size')

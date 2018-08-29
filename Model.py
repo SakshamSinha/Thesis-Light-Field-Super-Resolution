@@ -22,6 +22,7 @@ import numpy as np
 #     def forward(self, x):
 #         return self.shuffler(self.conv(x))
 
+# first CNN model
 # class Generator(nn.Module):
 #     def __init__(self, upsample_factor):
 #         super(Generator, self).__init__()

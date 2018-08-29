@@ -455,8 +455,6 @@ def train_multiple(generator, discriminator, opt, dataloader, writer, scale):
                 optimizer.zero_grad()
                 high_res_real = Variable(high_img.cuda())
                 high_res_fake = generator(Variable(inputs[0][np.newaxis,:]).cuda(),Variable(inputs[1][np.newaxis,:]).cuda(),Variable(inputs[2][np.newaxis,:]).cuda(),Variable(inputs[3][np.newaxis,:]).cuda())
-                target_real = Variable(torch.rand(opt.batchSize, 1) * 0.5 + 0.7).cuda()
-                target_fake = Variable(torch.rand(opt.batchSize, 1) * 0.3).cuda()
                 generator_content_loss = content_criterion(high_res_fake, high_res_real)
                 mean_generator_content_loss += generator_content_loss.data[0]
                 generator_content_loss.backward()
@@ -517,8 +515,7 @@ def train_multiple(generator, discriminator, opt, dataloader, writer, scale):
                     #high_res_fake_cat = torch.cat([ image for image in high_res_fake ], 0)
                     fake_features = feature_extractor(high_res_fake)
                     real_features = Variable(feature_extractor(high_res_real).data)
-                    # outputs = torch.chunk(high_img.cpu().data,4,0)
-                    # imshow(high_res_fake[0].cpu().data)
+
                     # generator_content_loss = content_criterion(high_res_fake, high_res_real) + 0.006*content_criterion(fake_features, real_features)
                     generator_content_loss = content_criterion(high_res_fake,
                                                                high_res_real) + content_criterion(fake_features,
@@ -568,6 +565,7 @@ def train_multiple(generator, discriminator, opt, dataloader, writer, scale):
         torch.save(generator.state_dict(), '%s/generator_final.pth' % opt.out)
         torch.save(discriminator.state_dict(), '%s/discriminator_final.pth' % opt.out)
 
+#old way of training
 # def train_angres(AngRes, lflists, opt, writer):
 #     content_criterion = nn.MSELoss()
 #     fake_ang_res = torch.FloatTensor(opt.batchSize, 3, opt.upSampling*opt.imageSize, opt.upSampling*opt.imageSize)
@@ -628,6 +626,7 @@ def train_multiple(generator, discriminator, opt, dataloader, writer, scale):
 #         # Do checkpointing
 #         torch.save(AngRes.state_dict(), '%s/AngRes_final.pth' % opt.out)
 
+#for model Angresv1. Will require matlab pre-processed images.
 # def train_angres(AngRes, lflists, opt, writer):
 #     content_criterion = nn.MSELoss()
 #     fake_ang_res = torch.FloatTensor(4, 3, opt.upSampling*opt.imageSize, opt.upSampling*opt.imageSize)
@@ -703,11 +702,11 @@ def train_multiple(generator, discriminator, opt, dataloader, writer, scale):
 #         # Do checkpointing
 #         torch.save(AngRes.state_dict(), '%s/AngRes_final.pth' % opt.out)
 
-#new model
+#for model Angresv2. Will require matlab pre-processed images.
 def train_angres(AngRes, lflists, opt, writer):
     content_criterion = nn.MSELoss()
     fake_ang_res = torch.FloatTensor(4, 3, opt.upSampling*opt.imageSize, opt.upSampling*opt.imageSize)
-    optimizer = optim.Adam(AngRes.parameters(), lr=0.0001)
+    optimizer = optim.Adam(AngRes.parameters(), lr=opt.angResLR)
     scheduler_angres = ReduceLROnPlateau(optimizer, 'min', factor=0.1, patience=3, verbose=True)
     curr_time = time.time()
     if opt.cuda:
